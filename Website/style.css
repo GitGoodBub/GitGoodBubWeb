@@ -30,6 +30,8 @@ nav ul li {
 
 nav ul li a {
   color: #00ffff;
+  font-weight: bold;
+  font-size: 30px;
   text-decoration: none;
 }
 
@@ -43,4 +45,5 @@ main {
 
 .center{
     text-align: center;
+    font-size: 30px;
 }

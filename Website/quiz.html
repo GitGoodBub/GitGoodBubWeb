@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz — School Website</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .quiz-container { max-width: 800px; margin: 8rem auto; padding: 1rem; background:#ffffff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+    .question { font-weight:600; margin-bottom:0.5rem; }
+    .choices { list-style:none; padding:0; }
+    .choices li { margin:0.5rem 0; }
+    .btn { display:inline-block; padding:0.5rem 1rem; background:#001eff; color:#fff; border-radius:6px; text-decoration:none; cursor:pointer; border:none; }
+    .result { margin-top:1rem; font-weight:700; }
+  </style>
+</head>
+<body>
+  <main class="quiz-container">
+    <h1>Gamer Quiz</h1>
+    <a href="home.html" class="btn" style="background:#666;margin-bottom:0.75rem;display:inline-block">&larr; Back Home</a>
+    <div id="quiz">
+      <!-- quiz will be injected here -->
+    </div>
+    <div style="margin-top:1rem;">
+      <button id="prevBtn" class="btn" style="background:#666">Previous</button>
+      <button id="nextBtn" class="btn">Next</button>
+      <button id="submitBtn" class="btn" style="display:none;background:#28a745">Submit</button>
+    </div>
+    <div id="result" class="result" aria-live="polite"></div>
+  </main>
+  <script>
+    const quizData = [
+      { q: "Which company developed 'Minecraft'?", choices: ['Mojang','Valve','Epic','Ubisoft'], a:0 },
+      { q: "In gaming, what does 'NPC' stand for?", choices: ['Non-player character','New player character','Network play controller','Next phase checkpoint'], a:0 },
+      { q: "Which genre is 'The Legend of Zelda' primarily?", choices: ['First-person shooter','Puzzle','Action-adventure','Racing'], a:2 },
+      { q: "Which platform is a digital game storefront by Valve?", choices: ['Steam','Epic Games Store','GOG','Origin'], a:0 }
+    ];
+
+    let current = 0;
+    const answers = Array(quizData.length).fill(null);
+
+    const quizEl = document.getElementById('quiz');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultEl = document.getElementById('result');
+
+    function renderQuestion(i){
+      const item = quizData[i];
+      const choicesHtml = item.choices.map((c, idx) => {
+        const checked = answers[i] === idx ? 'checked' : '';
+        return `<li><label><input type="radio" name="choice" value="${idx}" ${checked}> ${c}</label></li>`;
+      }).join('');
+      quizEl.innerHTML = `<div class="question">Q${i+1}. ${item.q}</div><ul class="choices">${choicesHtml}</ul>`;
+      // toggle buttons
+      prevBtn.disabled = i === 0;
+      nextBtn.style.display = i === quizData.length-1 ? 'none' : 'inline-block';
+      submitBtn.style.display = i === quizData.length-1 ? 'inline-block' : 'none';
+      resultEl.textContent = '';
+      // add change handlers
+      Array.from(document.getElementsByName('choice')).forEach(r => {
+        r.addEventListener('change', (e) => {
+          answers[i] = Number(e.target.value);
+        });
+      });
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if(current>0){ current--; renderQuestion(current); }
+    });
+    nextBtn.addEventListener('click', () => {
+      if(current < quizData.length-1){ current++; renderQuestion(current); }
+    });
+    submitBtn.addEventListener('click', () => {
+      let score = 0;
+      for(let i=0;i<quizData.length;i++){
+        if(answers[i] === quizData[i].a) score++;
+      }
+      resultEl.textContent = `You scored ${score} / ${quizData.length}.`;
+    });
+
+    // initial render
+    renderQuestion(0);
+  </script>
+</body>
+</html>
